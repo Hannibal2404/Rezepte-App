@@ -229,7 +229,7 @@ $$('.fchip').forEach(ch=>ch.addEventListener('click',()=>{
   if(s!==undefined){ if(activeQuelle===s){activeQuelle=null;ch.classList.remove('on');}
     else{activeQuelle=s; $$('.fchip[data-src]').forEach(x=>x.classList.remove('on')); ch.classList.add('on');} }
   apply();
-});
+}));
 apply();
 if('serviceWorker'in navigator&&location.protocol.indexOf('http')===0){
   window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
