@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#15120F">
+<title>Rezepte</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<style>
+*{box-sizing:border-box;}
+:root{
+  --paper:#15120F; --ink:#F2EDE5; --muted:#A79E90; --faint:#6E665B;
+  --line:#2C2823; --card:#1E1A16; --accent:#F0607A; --accent-ink:#F7B9C4;
+  --chip:#26221D;
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Georgia,"Times New Roman",serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+}
+html,body{margin:0;}
+body{background:var(--paper);color:var(--ink);font-family:var(--sans);
+  line-height:1.5;-webkit-font-smoothing:antialiased;}
+.wrap{max-width:960px;margin:0 auto;padding:clamp(20px,4vw,44px);}
+.masthead{border-bottom:2px solid var(--ink);padding-bottom:22px;margin-bottom:30px;}
+.eyebrow{font-size:12px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--accent);font-weight:600;margin:0 0 12px;}
+.title{font-family:var(--serif);font-weight:600;font-size:clamp(30px,5vw,46px);
+  line-height:1.04;letter-spacing:-.01em;margin:0;}
+.subtitle{color:var(--muted);font-size:15px;margin:8px 0 0;}
+.kpis{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin:0 0 28px;}
+@media(min-width:640px){.kpis{grid-template-columns:repeat(4,1fr);}}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:14px;
+  padding:14px 16px;display:flex;flex-direction:column;gap:6px;}
+.kpi__k{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--faint);}
+.kpi__v{font-family:var(--serif);font-size:30px;font-weight:600;line-height:1;
+  font-variant-numeric:tabular-nums;}
+.kpi__u{font-size:15px;color:var(--muted);font-weight:400;}
+.toolbar{position:sticky;top:0;z-index:6;display:flex;flex-wrap:wrap;
+  align-items:center;gap:10px 12px;margin:0 0 22px;padding:12px 0;
+  background:var(--paper);border-bottom:1px solid var(--line);}
+.search{flex:1;min-width:170px;font-size:14px;padding:9px 12px;border:1px solid var(--line);
+  border-radius:10px;background:var(--card);color:var(--ink);}
+.search::placeholder{color:var(--faint);}
+.search:focus{outline:2px solid var(--accent);outline-offset:1px;border-color:transparent;}
+.sortsel{font-size:13px;padding:8px 10px;border:1px solid var(--line);border-radius:10px;
+  background:var(--card);color:var(--ink);cursor:pointer;}
+.count{font-size:12px;color:var(--muted);white-space:nowrap;
+  font-variant-numeric:tabular-nums;margin-left:auto;}
+.filters{display:flex;flex-wrap:wrap;gap:7px;margin:0 0 26px;}
+.fchip{font-size:12px;color:var(--muted);background:var(--chip);border:1px solid transparent;
+  border-radius:20px;padding:4px 11px;cursor:pointer;line-height:1.3;}
+.fchip.on{color:var(--paper);background:var(--accent);border-color:var(--accent);
+  font-weight:600;}
+.grid{display:grid;grid-template-columns:1fr;gap:14px;}
+@media(min-width:620px){.grid{grid-template-columns:1fr 1fr;}}
+.rc{background:var(--card);border:1px solid var(--line);border-radius:14px;
+  padding:16px 18px;display:flex;flex-direction:column;}
+.rc__title{font-family:var(--serif);font-size:20px;font-weight:600;margin:0 0 5px;
+  line-height:1.15;}
+.rc__meta{font-size:11px;letter-spacing:.05em;text-transform:uppercase;
+  color:var(--accent-ink);margin:0 0 12px;font-variant-numeric:tabular-nums;}
+.rates{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:0 0 12px;}
+.rate{background:var(--paper);border:1px solid var(--line);border-radius:10px;
+  padding:8px 9px;display:flex;flex-direction:column;gap:5px;}
+.rate__k{font-size:10px;letter-spacing:.05em;text-transform:uppercase;color:var(--faint);}
+.rate__v{font-family:var(--serif);font-size:17px;font-weight:600;line-height:1;
+  font-variant-numeric:tabular-nums;}
+.rate__v small{font-size:11px;color:var(--faint);font-family:var(--sans);font-weight:400;}
+.bar{height:4px;border-radius:3px;background:var(--line);overflow:hidden;}
+.bar>i{display:block;height:100%;background:var(--accent);}
+.rate--empty .rate__v{color:var(--faint);}
+.rc__cost{font-size:13px;color:var(--ink);margin:0 0 12px;font-weight:600;
+  font-variant-numeric:tabular-nums;}
+.rc__cost span{color:var(--muted);font-weight:400;}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 12px;}
+.chip{font-size:11px;color:var(--muted);background:var(--chip);border-radius:20px;
+  padding:3px 9px;line-height:1.3;}
+.rc__foot{display:flex;align-items:center;gap:12px;margin-top:auto;padding-top:6px;}
+.rc__toggle{font-size:13px;padding:7px 12px;border:1px solid var(--line);border-radius:10px;
+  background:var(--paper);color:var(--ink);cursor:pointer;}
+.rc__toggle:hover{border-color:var(--accent);}
+.rc__src{font-size:12.5px;color:var(--accent-ink);text-decoration:none;margin-left:auto;}
+.rc__src:hover{text-decoration:underline;}
+.detail{margin-top:14px;padding-top:14px;border-top:1px solid var(--line);
+  display:grid;grid-template-columns:1fr;gap:16px;}
+@media(min-width:520px){.detail{grid-template-columns:1fr 1.15fr;}}
+.detail.hidden{display:none;}
+.dh{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--faint);margin:0 0 8px;}
+.ings{list-style:none;margin:0;padding:0;}
+.ings li{font-size:13px;padding:3px 0;border-bottom:1px solid var(--line);line-height:1.35;}
+.ings li:last-child{border-bottom:none;}
+.steps{margin:0;padding-left:18px;}
+.steps li{font-size:13px;line-height:1.5;margin-bottom:6px;}
+.notes{list-style:none;margin:8px 0 0;padding:0;}
+.notes li{font-size:12.5px;color:var(--muted);line-height:1.4;padding:2px 0;}
+.volltext{margin-top:12px;}
+.volltext summary{font-size:12px;color:var(--faint);cursor:pointer;letter-spacing:.05em;
+  text-transform:uppercase;}
+.volltext pre{white-space:pre-wrap;font-family:var(--sans);font-size:12px;
+  color:var(--muted);margin:8px 0 0;line-height:1.5;}
+.empty{color:var(--faint);font-size:14px;padding:30px 0;text-align:center;}
+.foot{margin-top:40px;padding-top:18px;border-top:1px solid var(--line);
+  color:var(--faint);font-size:12px;}
+[hidden]{display:none!important;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="masthead">
+    <p class="eyebrow">Rezept-Log</p>
+    <h1 class="title">Rezepte</h1>
+    <p class="subtitle">Gemeinsam gekocht · 1 Rezepte · Stand 05.09.2026</p>
+  </header>
+  <div class="kpis"><div class="kpi"><span class="kpi__k">Rezepte</span><span class="kpi__v">1<span class="kpi__u"></span></span></div><div class="kpi"><span class="kpi__k">Ø Geschmack</span><span class="kpi__v">–<span class="kpi__u"></span></span></div><div class="kpi"><span class="kpi__k">Mal gekocht</span><span class="kpi__v">0<span class="kpi__u"></span></span></div><div class="kpi"><span class="kpi__k">Mit Kosten</span><span class="kpi__v">1<span class="kpi__u">/1</span></span></div></div>
+  <div class="toolbar">
+    <input id="search" class="search" type="search" placeholder="Suchen: Name, Zutat, Tag …" autocomplete="off">
+    <select id="sort" class="sortsel" aria-label="Sortierung">
+      <option value="geschmack">Beste zuerst</option>
+      <option value="kosten">Günstigste</option>
+      <option value="aufwand">Einfachste</option>
+      <option value="dauer">Schnellste</option>
+      <option value="neu">Zuletzt gekocht</option>
+      <option value="name">Name A–Z</option>
+    </select>
+    <span id="count" class="count"></span>
+  </div>
+  <div class="filters"><span class="fchip" data-src="youtube">youtube</span><span class="fchip" data-tag="burrito bowl">burrito bowl</span><span class="fchip" data-tag="meal prep">meal prep</span><span class="fchip" data-tag="proteinreich">proteinreich</span><span class="fchip" data-tag="rindfleisch">rindfleisch</span></div>
+  <section id="grid" class="grid">
+<article class="rc" data-hay="proteinreiche rindfleisch-taco-bowl meal prep burrito bowl proteinreich rindfleisch 400 g maiskörner, abgetropft 2 stück tomaten, gewürfelt 0,5 stück rote zwiebel, gewürfelt 1 stück jalapeño, gewürfelt 7 g koriander, grob gehackt 2 stück kleine limetten, saft nach geschmack gewürze 2 tl olivenöl 750 g rinderhackfleisch 1 tl gemahlener kreuzkümmel 1 tl getrockneter oregano 1 tl geräuchertes paprikapulver 0,5 tl chilipulver 150 ml rinderbrühe 3 stück frühlingszwiebeln (weiße wurzelenden), in dünne scheiben geschnitten nach geschmack gewürz 400 g schwarze bohnen, abgetropft und abgespült 120 g geriebener cheddar-käse 350 g basmatireis, gewaschen 700 ml kaltes wasser 3 stück frühlingszwiebeln (grüne stiele), in dünne scheiben geschnitten nach geschmack gewürz" data-tags="meal prep|burrito bowl|proteinreich|rindfleisch" data-quelle="youtube" data-geschmack="-1" data-kosten="-1" data-aufwand="-1" data-dauer="99999" data-latest="" data-mtime="1788634600">
+  <h2 class="rc__title">Proteinreiche Rindfleisch-Taco-Bowl</h2>
+  <p class="rc__meta">youtube</p>
+  <div class="rates"><div class="rate rate--empty"><span class="rate__k">Geschmack</span><span class="rate__v">–</span><div class="bar"><i style="width:0"></i></div></div><div class="rate rate--empty"><span class="rate__k">Kosten</span><span class="rate__v">–</span><div class="bar"><i style="width:0"></i></div></div><div class="rate rate--empty"><span class="rate__k">Aufwand</span><span class="rate__v">–</span><div class="bar"><i style="width:0"></i></div></div></div>
+  <p class="rc__cost">3,84 € <span>pro Portion (geschätzt)</span></p><div class="chips"><span class="chip">meal prep</span><span class="chip">burrito bowl</span><span class="chip">proteinreich</span><span class="chip">rindfleisch</span></div>
+  <div class="rc__foot">
+    <button class="rc__toggle" onclick="this.closest('.rc').querySelector('.detail').classList.toggle('hidden')">Details</button>
+    <a class="rc__src" href="https://www.youtube.com/watch?v=IqgqMNJlQbk" target="_blank" rel="noopener">Quelle ↗</a>
+  </div>
+  <div class="detail hidden">
+    <div><div class="dh">Zutaten</div><ul class="ings"><li>400 g Maiskörner, abgetropft</li><li>2 Stück Tomaten, gewürfelt</li><li>0,5 Stück rote Zwiebel, gewürfelt</li><li>1 Stück Jalapeño, gewürfelt</li><li>7 g Koriander, grob gehackt</li><li>2 Stück kleine Limetten, Saft</li><li>nach Geschmack Gewürze</li><li>2 TL Olivenöl</li><li>750 g Rinderhackfleisch</li><li>1 TL gemahlener Kreuzkümmel</li><li>1 TL getrockneter Oregano</li><li>1 TL geräuchertes Paprikapulver</li><li>0,5 TL Chilipulver</li><li>150 ml Rinderbrühe</li><li>3 Stück Frühlingszwiebeln (weiße Wurzelenden), in dünne Scheiben geschnitten</li><li>nach Geschmack Gewürz</li><li>400 g Schwarze Bohnen, abgetropft und abgespült</li><li>120 g geriebener Cheddar-Käse</li><li>350 g Basmatireis, gewaschen</li><li>700 ml kaltes Wasser</li><li>3 Stück Frühlingszwiebeln (grüne Stiele), in dünne Scheiben geschnitten</li><li>nach Geschmack Gewürz</li></ul></div>
+    <div><div class="dh">Zubereitung</div><ol class="steps"><li>(Keine Zubereitungsschritte in Beschreibung oder Untertiteln gefunden - beim Kochen hier eintragen.)</li></ol><details class="volltext"><summary>Quelle im Volltext</summary><pre>Diese proteinreiche und nährstoffreiche Burrito-Bowl mit würzigem Rindfleisch im Taco-Stil ist unglaublich lecker und macht richtig satt. Sie ist kinderleicht zuzubereiten, und ich habe extra darauf geachtet, die Kosten so gering wie möglich zu halten, besonders angesichts der heutigen Preise. Alle Nährwertangaben, inklusive Portionsgrößen pro Portion, finden Sie im Video und weiter unten unter der Zutatenliste. Viel Spaß mit dieser leckeren und einfachen Meal-Prep-Episode!
+... Unterstütze den Kanal auf Patreon –   / chefjackovens
+Meine Messer – www.koiknives.com
+Luvele Küchengeräte &amp; Vorratsdosen – https://www.luvele.com.au/?ref=qNAC7J...
+Gewürze &amp; Würzmittel, die ich verwende – https://centuriesahead.com.au
+Werkzeuge &amp; Ausrüstung – https://chefjackovens.com/affiliate-l...
+Hol dir eine Schürze – https://shopcjo.myspreadshop.com.au
+Meine Website – https://chefjackovens.com
+Wenn du dieses Rezept nachkochst, mach ein Foto, folge mir und verlinke mich auf Instagram. Ich freue mich immer über eure Kreationen!
+https://www.instagram.com/chefjackove...
+Zutaten:
+Leicht gegrillte Maissalsa:
+1 Dose (400 g) Maiskörner, abgetropft
+2 Tomaten, gewürfelt
+1/2 rote Zwiebel, gewürfelt
+1 Jalapeño, gewürfelt
+7 g Koriander, grob gehackt
+2 kleine Limetten, Saft
+Gewürze nach Geschmack
+Gewürzte Rinderhackfleischmischung:
+2 TL (10 ml) Olivenöl
+750 g Rinderhackfleisch
+1 TL (2,5 g) gemahlener Kreuzkümmel
+1 TL (1,5 g) getrockneter Oregano
+1 TL (2,5 g) geräuchertes Paprikapulver
+1/2 TL (1 g) Chilipulver
+2/3 Tasse (150 ml) Rinderbrühe
+3 Frühlingszwiebeln (weiße Wurzelenden), in dünne Scheiben geschnitten
+Gewürz nach Geschmack
+Restliche Zutaten -
+1 Dose (400 g) Schwarze Bohnen, abgetropft und abgespült
+120 g geriebener Cheddar-Käse
+350 g Basmatireis, gewaschen
+700 ml kaltes Wasser
+3 Frühlingszwiebeln (grüne Stiele), in dünne Scheiben geschnitten
+Gewürz nach Geschmack
+Nährwerte -
+Kalorien 979
+Gesamtfett 21,6 g
+Gesättigte Fettsäuren 9,4 g
+Cholesterin 159 mg
+Natrium 370 mg
+Gesamtkohlenhydrate 119,5 g
+Ballaststoffe: 16,3 g
+Zucker: 5,5 g
+Protein: 76,3 g
+#mealprep #mealpreprecipes #burritobowl</pre></details></div>
+  </div>
+</article>
+  </section>
+  <p class="foot">Automatisch erzeugt aus dem Vault (05.09.2026). Bewertungen 1–10, 10 ist gut.
+  Kosten pro Portion sind Richtwerte aus REWE-Preisen.</p>
+</div>
+<script>
+const $=s=>document.querySelector(s), $$=s=>Array.from(document.querySelectorAll(s));
+const cards=$$('.rc'), grid=$('#grid');
+let activeTags=new Set(), activeQuelle=null;
+function apply(){
+  const q=$('#search').value.trim().toLowerCase();
+  let vis=0;
+  cards.forEach(c=>{
+    let ok = !q || c.dataset.hay.includes(q);
+    if(ok && activeTags.size){ const ts=(c.dataset.tags||'').split('|');
+      ok=[...activeTags].every(t=>ts.includes(t)); }
+    if(ok && activeQuelle){ ok = c.dataset.quelle===activeQuelle; }
+    c.hidden=!ok; if(ok)vis++;
+  });
+  $('#count').textContent = vis+' / '+cards.length+' Rezepte';
+  sort();
+}
+function sort(){
+  const m=$('#sort').value;
+  const num=(c,k)=>parseFloat(c.dataset[k]);
+  const vis=cards.filter(c=>!c.hidden);
+  vis.sort((a,b)=>{
+    if(m==='geschmack')return num(b,'geschmack')-num(a,'geschmack');
+    if(m==='kosten')return num(b,'kosten')-num(a,'kosten');
+    if(m==='aufwand')return num(b,'aufwand')-num(a,'aufwand');
+    if(m==='dauer')return num(a,'dauer')-num(b,'dauer');
+    if(m==='neu')return (b.dataset.latest||b.dataset.mtime).localeCompare(a.dataset.latest||a.dataset.mtime);
+    return a.querySelector('.rc__title').textContent.localeCompare(b.querySelector('.rc__title').textContent);
+  });
+  vis.forEach(c=>grid.appendChild(c));
+}
+$('#search').addEventListener('input',apply);
+$('#sort').addEventListener('change',sort);
+$$('.fchip').forEach(ch=>ch.addEventListener('click',()=>{
+  const t=ch.dataset.tag, s=ch.dataset.src;
+  if(t!==undefined){ if(activeTags.has(t))activeTags.delete(t); else activeTags.add(t); ch.classList.toggle('on'); }
+  if(s!==undefined){ if(activeQuelle===s){activeQuelle=null;ch.classList.remove('on');}
+    else{activeQuelle=s; $$('.fchip[data-src]').forEach(x=>x.classList.remove('on')); ch.classList.add('on');} }
+  apply();
+});
+apply();
+if('serviceWorker'in navigator&&location.protocol.indexOf('http')===0){
+  window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
+}
+</script>
+</body>
+</html>
