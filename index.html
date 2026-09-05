@@ -54,6 +54,8 @@ body{background:var(--paper);color:var(--ink);font-family:var(--sans);
 @media(min-width:620px){.grid{grid-template-columns:1fr 1fr;}}
 .rc{background:var(--card);border:1px solid var(--line);border-radius:14px;
   padding:16px 18px;display:flex;flex-direction:column;}
+.rc__img{width:100%;height:180px;object-fit:cover;border-radius:10px;
+  margin:0 0 13px;border:1px solid var(--line);background:var(--chip);}
 .rc__title{font-family:var(--serif);font-size:20px;font-weight:600;margin:0 0 5px;
   line-height:1.15;}
 .rc__meta{font-size:11px;letter-spacing:.05em;text-transform:uppercase;
@@ -124,13 +126,14 @@ body{background:var(--paper);color:var(--ink);font-family:var(--sans);
     </select>
     <span id="count" class="count"></span>
   </div>
-  <div class="filters"><span class="fchip" data-src="youtube">youtube</span><span class="fchip" data-tag="burrito bowl">burrito bowl</span><span class="fchip" data-tag="meal prep">meal prep</span><span class="fchip" data-tag="proteinreich">proteinreich</span><span class="fchip" data-tag="rindfleisch">rindfleisch</span></div>
+  <div class="filters"><span class="fchip" data-src="youtube">youtube</span><span class="fchip" data-tag="burrito bowl">burrito bowl</span><span class="fchip" data-tag="hackfleisch">hackfleisch</span><span class="fchip" data-tag="meal prep">meal prep</span><span class="fchip" data-tag="proteinreich">proteinreich</span></div>
   <section id="grid" class="grid">
-<article class="rc" data-hay="proteinreiche rindfleisch-taco-bowl meal prep burrito bowl proteinreich rindfleisch 400 g maiskörner, abgetropft 2 stück tomaten, gewürfelt 0,5 stück rote zwiebel, gewürfelt 1 stück jalapeño, gewürfelt 7 g koriander, grob gehackt 2 stück kleine limetten, saft nach geschmack gewürze 2 tl olivenöl 750 g rinderhackfleisch 1 tl gemahlener kreuzkümmel 1 tl getrockneter oregano 1 tl geräuchertes paprikapulver 0,5 tl chilipulver 150 ml rinderbrühe 3 stück frühlingszwiebeln (weiße wurzelenden), in dünne scheiben geschnitten nach geschmack gewürz 400 g schwarze bohnen, abgetropft und abgespült 120 g geriebener cheddar-käse 350 g basmatireis, gewaschen 700 ml kaltes wasser 3 stück frühlingszwiebeln (grüne stiele), in dünne scheiben geschnitten nach geschmack gewürz" data-tags="meal prep|burrito bowl|proteinreich|rindfleisch" data-quelle="youtube" data-geschmack="-1" data-kosten="-1" data-aufwand="-1" data-dauer="99999" data-latest="" data-mtime="1788634600">
-  <h2 class="rc__title">Proteinreiche Rindfleisch-Taco-Bowl</h2>
+<article class="rc" data-hay="proteinreiche hackfleisch-taco-bowl meal prep burrito bowl proteinreich hackfleisch 400 g maiskörner, abgetropft 2 stück tomaten, gewürfelt 0,5 stück rote zwiebel, gewürfelt 1 stück jalapeño, gewürfelt 7 g koriander, grob gehackt 2 stück kleine limetten, saft nach geschmack gewürze 2 tl olivenöl 750 g rinderhackfleisch 1 tl gemahlener kreuzkümmel 1 tl getrockneter oregano 1 tl geräuchertes paprikapulver 0,5 tl chilipulver 150 ml rinderbrühe 3 stück frühlingszwiebeln (weiße wurzelenden), in dünne scheiben geschnitten nach geschmack gewürz 400 g schwarze bohnen, abgetropft und abgespült 120 g geriebener cheddar-käse 350 g basmatireis, gewaschen 700 ml kaltes wasser 3 stück frühlingszwiebeln (grüne stiele), in dünne scheiben geschnitten nach geschmack gewürz" data-tags="meal prep|burrito bowl|proteinreich|hackfleisch" data-quelle="youtube" data-geschmack="-1" data-kosten="-1" data-aufwand="-1" data-dauer="99999" data-latest="" data-mtime="1788636528">
+  
+  <h2 class="rc__title">Proteinreiche Hackfleisch-Taco-Bowl</h2>
   <p class="rc__meta">youtube</p>
   <div class="rates"><div class="rate rate--empty"><span class="rate__k">Geschmack</span><span class="rate__v">–</span><div class="bar"><i style="width:0"></i></div></div><div class="rate rate--empty"><span class="rate__k">Kosten</span><span class="rate__v">–</span><div class="bar"><i style="width:0"></i></div></div><div class="rate rate--empty"><span class="rate__k">Aufwand</span><span class="rate__v">–</span><div class="bar"><i style="width:0"></i></div></div></div>
-  <p class="rc__cost">3,84 € <span>pro Portion (geschätzt)</span></p><div class="chips"><span class="chip">meal prep</span><span class="chip">burrito bowl</span><span class="chip">proteinreich</span><span class="chip">rindfleisch</span></div>
+  <p class="rc__cost">3,84 € <span>pro Portion (geschätzt)</span></p><div class="chips"><span class="chip">meal prep</span><span class="chip">burrito bowl</span><span class="chip">proteinreich</span><span class="chip">hackfleisch</span></div>
   <div class="rc__foot">
     <button class="rc__toggle" onclick="this.closest('.rc').querySelector('.detail').classList.toggle('hidden')">Details</button>
     <a class="rc__src" href="https://www.youtube.com/watch?v=IqgqMNJlQbk" target="_blank" rel="noopener">Quelle ↗</a>
