@@ -115,6 +115,65 @@ body{background:var(--paper);color:var(--ink);font-family:var(--sans);
 .foot{margin-top:40px;padding-top:18px;border-top:1px solid var(--line);
   color:var(--faint);font-size:12px;}
 [hidden]{display:none!important;}
+/* Preis pro Portion */
+.rc__cost b{color:var(--accent-ink);}
+.rc__pp{color:var(--muted);font-weight:400;}
+/* Nährwert-Badges */
+.nutri{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 12px;}
+.nutri span{font-size:11px;color:var(--accent-ink);background:var(--chip);
+  border:1px solid var(--line);border-radius:20px;padding:3px 9px;line-height:1.3;
+  font-variant-numeric:tabular-nums;}
+/* Auswahl-Checkbox für die Einkaufsliste */
+.rc__pick{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--muted);
+  cursor:pointer;user-select:none;}
+.rc__pick input{width:15px;height:15px;accent-color:var(--accent);cursor:pointer;}
+.rc.picked{border-color:var(--accent);}
+/* Portionsrechner im Detail */
+.portioner{display:flex;align-items:center;gap:8px;margin:0 0 10px;font-size:12px;
+  color:var(--muted);}
+.portioner button{width:26px;height:26px;border:1px solid var(--line);border-radius:8px;
+  background:var(--paper);color:var(--ink);cursor:pointer;font-size:15px;line-height:1;}
+.portioner button:hover{border-color:var(--accent);}
+.portioner b{color:var(--ink);font-variant-numeric:tabular-nums;min-width:1.4em;
+  text-align:center;}
+.ings li .amt{color:var(--accent-ink);font-variant-numeric:tabular-nums;}
+/* Werkzeug-Buttons in der Toolbar */
+.tbtn{font-size:13px;padding:8px 12px;border:1px solid var(--line);border-radius:10px;
+  background:var(--card);color:var(--ink);cursor:pointer;white-space:nowrap;}
+.tbtn:hover{border-color:var(--accent);}
+/* Schwebende Einkaufslisten-Leiste */
+.cartbar{position:fixed;left:0;right:0;bottom:0;z-index:20;transform:translateY(120%);
+  transition:transform .2s ease;background:var(--card);border-top:1px solid var(--line);
+  box-shadow:0 -8px 24px rgba(0,0,0,.35);}
+.cartbar.show{transform:translateY(0);}
+.cartbar__in{max-width:960px;margin:0 auto;padding:12px clamp(16px,4vw,44px);
+  display:flex;align-items:center;gap:12px;}
+.cartbar__txt{font-size:14px;color:var(--ink);}
+.cartbar__txt b{color:var(--accent-ink);font-variant-numeric:tabular-nums;}
+.cartbar .tbtn{margin-left:auto;}
+.cartbar .cartbar__clear{background:transparent;}
+/* Modal (Einkaufsliste) */
+.modal{position:fixed;inset:0;z-index:30;background:rgba(0,0,0,.6);
+  display:flex;align-items:flex-end;justify-content:center;padding:0;}
+@media(min-width:620px){.modal{align-items:center;padding:20px;}}
+.modal[hidden]{display:none;}
+.sheet{background:var(--paper);border:1px solid var(--line);
+  border-radius:16px 16px 0 0;width:100%;max-width:560px;max-height:86vh;
+  overflow:auto;padding:20px clamp(18px,4vw,26px) 26px;}
+@media(min-width:620px){.sheet{border-radius:16px;}}
+.sheet__head{display:flex;align-items:baseline;gap:10px;margin:0 0 4px;}
+.sheet__head h2{font-family:var(--serif);font-size:22px;font-weight:600;margin:0;}
+.sheet__x{margin-left:auto;background:transparent;border:none;color:var(--muted);
+  font-size:22px;cursor:pointer;line-height:1;}
+.sheet__sub{font-size:12.5px;color:var(--muted);margin:0 0 16px;}
+.sheet__sub b{color:var(--accent-ink);font-variant-numeric:tabular-nums;}
+.sl{list-style:none;margin:0;padding:0;}
+.sl li{font-size:14px;padding:7px 0;border-bottom:1px solid var(--line);
+  display:flex;gap:10px;align-items:baseline;line-height:1.35;}
+.sl li:last-child{border-bottom:none;}
+.sl .amt{color:var(--accent-ink);font-variant-numeric:tabular-nums;min-width:5.5em;}
+.sl .miss{color:var(--faint);font-size:12px;margin-top:10px;line-height:1.4;}
+.sheet__copy{margin-top:16px;}
 </style>
 </head>
 <body>
@@ -122,7 +181,7 @@ body{background:var(--paper);color:var(--ink);font-family:var(--sans);
   <header class="masthead">
     <p class="eyebrow">Rezept-Log</p>
     <h1 class="title">Rezepte</h1>
-    <p class="subtitle">Gemeinsam gekocht · 2 Rezepte · Stand 18.09.2026</p>
+    <p class="subtitle">Gemeinsam gekocht · 2 Rezepte · Stand 23.09.2026</p>
   </header>
   <div class="kpis"><div class="kpi"><span class="kpi__k">Rezepte</span><span class="kpi__v">2<span class="kpi__u"></span></span></div><div class="kpi"><span class="kpi__k">Ø Geschmack</span><span class="kpi__v">7,0<span class="kpi__u">/10</span></span></div><div class="kpi"><span class="kpi__k">Mal gekocht</span><span class="kpi__v">0<span class="kpi__u"></span></span></div><div class="kpi"><span class="kpi__k">Mit Preis</span><span class="kpi__v">2<span class="kpi__u">/2</span></span></div></div>
   <div class="toolbar">
@@ -134,22 +193,25 @@ body{background:var(--paper);color:var(--ink);font-family:var(--sans);
       <option value="neu">Zuletzt gekocht</option>
       <option value="name">Name A–Z</option>
     </select>
+    <button id="rnd" class="tbtn" type="button" title="Zufälliges Rezept">🎲 Zufall</button>
     <span id="count" class="count"></span>
   </div>
   <div class="filters"><span class="fchip" data-src="instagram">instagram</span><span class="fchip" data-src="youtube">youtube</span><span class="fchip" data-tag="beilage">beilage</span><span class="fchip" data-tag="burrito bowl">burrito bowl</span><span class="fchip" data-tag="hackfleisch">hackfleisch</span><span class="fchip" data-tag="kartoffelsalat">kartoffelsalat</span><span class="fchip" data-tag="meal prep">meal prep</span><span class="fchip" data-tag="proteinreich">proteinreich</span><span class="fchip" data-tag="salat">salat</span><span class="fchip" data-tag="vegetarisch">vegetarisch</span></div>
   <section id="grid" class="grid">
-<article class="rc" data-hay="proteinreiche hackfleisch-taco-bowl meal prep burrito bowl proteinreich hackfleisch 400 g maiskörner, abgetropft 2 stück tomaten, gewürfelt 0,5 stück rote zwiebel, gewürfelt 1 stück jalapeño, gewürfelt 7 g koriander, grob gehackt 2 stück kleine limetten, saft nach geschmack gewürze 2 tl olivenöl 750 g rinderhackfleisch 1 tl gemahlener kreuzkümmel 1 tl getrockneter oregano 1 tl geräuchertes paprikapulver 0,5 tl chilipulver 150 ml rinderbrühe 3 stück frühlingszwiebeln (weiße wurzelenden), in dünne scheiben geschnitten nach geschmack gewürz 400 g schwarze bohnen, abgetropft und abgespült 120 g geriebener cheddar-käse 350 g basmatireis, gewaschen 700 ml kaltes wasser 3 stück frühlingszwiebeln (grüne stiele), in dünne scheiben geschnitten nach geschmack gewürz" data-tags="meal prep|burrito bowl|proteinreich|hackfleisch" data-quelle="youtube" data-geschmack="7.0" data-aufwand="6.0" data-dauer="99999" data-latest="" data-mtime="1789719371">
+<article class="rc" data-slug="proteinreiche-hackfleisch-taco-bowl" data-title="Proteinreiche Hackfleisch-Taco-Bowl" data-hay="proteinreiche hackfleisch-taco-bowl meal prep burrito bowl proteinreich hackfleisch 400 g maiskörner, abgetropft 2 stück tomaten, gewürfelt 0,5 stück rote zwiebel, gewürfelt 1 stück jalapeño, gewürfelt 7 g koriander, grob gehackt 2 stück kleine limetten, saft nach geschmack gewürze 2 tl olivenöl 750 g rinderhackfleisch 1 tl gemahlener kreuzkümmel 1 tl getrockneter oregano 1 tl geräuchertes paprikapulver 0,5 tl chilipulver 150 ml rinderbrühe 3 stück frühlingszwiebeln (weiße wurzelenden), in dünne scheiben geschnitten nach geschmack gewürz 400 g schwarze bohnen, abgetropft und abgespült 120 g geriebener cheddar-käse 350 g basmatireis, gewaschen 700 ml kaltes wasser 3 stück frühlingszwiebeln (grüne stiele), in dünne scheiben geschnitten nach geschmack gewürz" data-tags="meal prep|burrito bowl|proteinreich|hackfleisch" data-quelle="youtube" data-geschmack="7.0" data-aufwand="6.0" data-dauer="99999" data-eur="27.99" data-portionen="4" data-latest="" data-mtime="1790156702">
   <img class="rc__img" src="bilder/proteinreiche-hackfleisch-taco-bowl.jpg" alt="Proteinreiche Hackfleisch-Taco-Bowl" loading="lazy">
   <h2 class="rc__title">Proteinreiche Hackfleisch-Taco-Bowl</h2>
-  <p class="rc__meta">youtube</p>
+  <p class="rc__meta">youtube · 4 Portion(en)</p>
+  <div class="nutri" title="pro Portion"><span>979 kcal</span><span>76 g Protein</span></div>
   <div class="rates"><div class="rate"><span class="rate__k">Geschmack</span><span class="rate__v">7<small>/10</small></span><div class="bar"><i style="width:70%"></i></div><span class="rate__ind">Basti 8 · Isi 6</span></div><div class="rate"><span class="rate__k">Aufwand</span><span class="rate__v">6<small>/10</small></span><div class="bar"><i style="width:60%"></i></div><span class="rate__ind">Basti 6 · Isi 6</span></div></div>
-  <p class="rc__cost">27,99 € <span>geschätzter Einkaufspreis</span></p><div class="chips"><span class="chip">meal prep</span><span class="chip">burrito bowl</span><span class="chip">proteinreich</span><span class="chip">hackfleisch</span></div>
+  <p class="rc__cost"><b>27,99 €</b> <span>Einkaufspreis</span> · <span class="rc__pp">7,00 €/Portion</span></p><div class="chips"><span class="chip">meal prep</span><span class="chip">burrito bowl</span><span class="chip">proteinreich</span><span class="chip">hackfleisch</span></div>
   <div class="rc__foot">
     <button class="rc__toggle" onclick="this.closest('.rc').querySelector('.detail').classList.toggle('hidden')">Details</button>
+    <label class="rc__pick"><input type="checkbox" class="pickbox"> Für Einkauf</label>
     <div class="rc__links"><a class="rc__rate-link" href="obsidian://open?vault=Vault&file=rezepte%2Fproteinreiche-hackfleisch-taco-bowl.md">Bewerten ↗</a><a class="rc__src" href="https://www.youtube.com/watch?v=IqgqMNJlQbk" target="_blank" rel="noopener">Quelle ↗</a></div>
   </div>
   <div class="detail hidden">
-    <div><div class="dh">Zutaten</div><ul class="ings"><li>400 g Maiskörner, abgetropft</li><li>2 Stück Tomaten, gewürfelt</li><li>0,5 Stück rote Zwiebel, gewürfelt</li><li>1 Stück Jalapeño, gewürfelt</li><li>7 g Koriander, grob gehackt</li><li>2 Stück kleine Limetten, Saft</li><li>nach Geschmack Gewürze</li><li>2 TL Olivenöl</li><li>750 g Rinderhackfleisch</li><li>1 TL gemahlener Kreuzkümmel</li><li>1 TL getrockneter Oregano</li><li>1 TL geräuchertes Paprikapulver</li><li>0,5 TL Chilipulver</li><li>150 ml Rinderbrühe</li><li>3 Stück Frühlingszwiebeln (weiße Wurzelenden), in dünne Scheiben geschnitten</li><li>nach Geschmack Gewürz</li><li>400 g Schwarze Bohnen, abgetropft und abgespült</li><li>120 g geriebener Cheddar-Käse</li><li>350 g Basmatireis, gewaschen</li><li>700 ml kaltes Wasser</li><li>3 Stück Frühlingszwiebeln (grüne Stiele), in dünne Scheiben geschnitten</li><li>nach Geschmack Gewürz</li></ul></div>
+    <div><div class="dh">Zutaten</div><div class="portioner" data-base="4"><span>Portionen</span><button type="button" data-step="-1" aria-label="weniger">−</button><b class="pval">4</b><button type="button" data-step="1" aria-label="mehr">+</button></div><ul class="ings"><li data-m="400" data-e="g" data-n="Maiskörner, abgetropft"><span class="amt">400 g</span> Maiskörner, abgetropft</li><li data-m="2" data-e="Stück" data-n="Tomaten, gewürfelt"><span class="amt">2 Stück</span> Tomaten, gewürfelt</li><li data-m="0.5" data-e="Stück" data-n="rote Zwiebel, gewürfelt"><span class="amt">0,5 Stück</span> rote Zwiebel, gewürfelt</li><li data-m="1" data-e="Stück" data-n="Jalapeño, gewürfelt"><span class="amt">1 Stück</span> Jalapeño, gewürfelt</li><li data-m="7" data-e="g" data-n="Koriander, grob gehackt"><span class="amt">7 g</span> Koriander, grob gehackt</li><li data-m="2" data-e="Stück" data-n="kleine Limetten, Saft"><span class="amt">2 Stück</span> kleine Limetten, Saft</li><li>nach Geschmack Gewürze</li><li data-m="2" data-e="TL" data-n="Olivenöl"><span class="amt">2 TL</span> Olivenöl</li><li data-m="750" data-e="g" data-n="Rinderhackfleisch"><span class="amt">750 g</span> Rinderhackfleisch</li><li data-m="1" data-e="TL" data-n="gemahlener Kreuzkümmel"><span class="amt">1 TL</span> gemahlener Kreuzkümmel</li><li data-m="1" data-e="TL" data-n="getrockneter Oregano"><span class="amt">1 TL</span> getrockneter Oregano</li><li data-m="1" data-e="TL" data-n="geräuchertes Paprikapulver"><span class="amt">1 TL</span> geräuchertes Paprikapulver</li><li data-m="0.5" data-e="TL" data-n="Chilipulver"><span class="amt">0,5 TL</span> Chilipulver</li><li data-m="150" data-e="ml" data-n="Rinderbrühe"><span class="amt">150 ml</span> Rinderbrühe</li><li data-m="3" data-e="Stück" data-n="Frühlingszwiebeln (weiße Wurzelenden), in dünne Scheiben geschnitten"><span class="amt">3 Stück</span> Frühlingszwiebeln (weiße Wurzelenden), in dünne Scheiben geschnitten</li><li>nach Geschmack Gewürz</li><li data-m="400" data-e="g" data-n="Schwarze Bohnen, abgetropft und abgespült"><span class="amt">400 g</span> Schwarze Bohnen, abgetropft und abgespült</li><li data-m="120" data-e="g" data-n="geriebener Cheddar-Käse"><span class="amt">120 g</span> geriebener Cheddar-Käse</li><li data-m="350" data-e="g" data-n="Basmatireis, gewaschen"><span class="amt">350 g</span> Basmatireis, gewaschen</li><li data-m="700" data-e="ml" data-n="kaltes Wasser"><span class="amt">700 ml</span> kaltes Wasser</li><li data-m="3" data-e="Stück" data-n="Frühlingszwiebeln (grüne Stiele), in dünne Scheiben geschnitten"><span class="amt">3 Stück</span> Frühlingszwiebeln (grüne Stiele), in dünne Scheiben geschnitten</li><li>nach Geschmack Gewürz</li></ul><div class="dh" style="margin-top:14px">Notizen</div><ul class="notes"><li>Portionen (4) sind geschätzt (Meal Prep), im Video nicht eindeutig genannt.</li></ul></div>
     <div><div class="dh">Zubereitung</div><ol class="steps"><li>(Keine Zubereitungsschritte in Beschreibung oder Untertiteln gefunden - beim Kochen hier eintragen.)</li></ol><details class="volltext"><summary>Quelle im Volltext</summary><pre>Diese proteinreiche und nährstoffreiche Burrito-Bowl mit würzigem Rindfleisch im Taco-Stil ist unglaublich lecker und macht richtig satt. Sie ist kinderleicht zuzubereiten, und ich habe extra darauf geachtet, die Kosten so gering wie möglich zu halten, besonders angesichts der heutigen Preise. Alle Nährwertangaben, inklusive Portionsgrößen pro Portion, finden Sie im Video und weiter unten unter der Zutatenliste. Viel Spaß mit dieser leckeren und einfachen Meal-Prep-Episode!
 ... Unterstütze den Kanal auf Patreon –   / chefjackovens
 Meine Messer – www.koiknives.com
@@ -199,18 +261,20 @@ Protein: 76,3 g
 #mealprep #mealpreprecipes #burritobowl</pre></details></div>
   </div>
 </article>
-<article class="rc" data-hay="viraler knuspriger kartoffelsalat kartoffelsalat vegetarisch salat beilage 700 g kartoffel-drillinge 20 ml olivenöl nach geschmack salz nach geschmack pfeffer nach geschmack paprika (gewürz) 200 g frische gurke 75 g paprika 100 g rote zwiebel nach geschmack dill oder petersilie 90 g joghurt 30 ml mayo 15 ml senf 20 ml zitronensaft nach geschmack salz nach geschmack pfeffer" data-tags="kartoffelsalat|vegetarisch|salat|beilage" data-quelle="instagram" data-geschmack="-1" data-aufwand="-1" data-dauer="99999" data-latest="" data-mtime="1789719371">
+<article class="rc" data-slug="viraler-knuspriger-kartoffelsalat" data-title="Viraler knuspriger Kartoffelsalat" data-hay="viraler knuspriger kartoffelsalat kartoffelsalat vegetarisch salat beilage 700 g kartoffel-drillinge 20 ml olivenöl nach geschmack salz nach geschmack pfeffer nach geschmack paprika (gewürz) 200 g frische gurke 75 g paprika 100 g rote zwiebel nach geschmack dill oder petersilie 90 g joghurt 30 ml mayo 15 ml senf 20 ml zitronensaft nach geschmack salz nach geschmack pfeffer" data-tags="kartoffelsalat|vegetarisch|salat|beilage" data-quelle="instagram" data-geschmack="-1" data-aufwand="-1" data-dauer="99999" data-eur="12.0" data-portionen="4" data-latest="" data-mtime="1790156702">
   <img class="rc__img" src="bilder/viraler-knuspriger-kartoffelsalat.jpg" alt="Viraler knuspriger Kartoffelsalat" loading="lazy">
   <h2 class="rc__title">Viraler knuspriger Kartoffelsalat</h2>
-  <p class="rc__meta">instagram</p>
+  <p class="rc__meta">instagram · 4 Portion(en)</p>
+  
   <div class="rates"><div class="rate rate--empty"><span class="rate__k">Geschmack</span><span class="rate__v">–</span><div class="bar"><i style="width:0%"></i></div></div><div class="rate rate--empty"><span class="rate__k">Aufwand</span><span class="rate__v">–</span><div class="bar"><i style="width:0%"></i></div></div></div>
-  <p class="rc__cost">12,00 € <span>geschätzter Einkaufspreis</span></p><div class="chips"><span class="chip">kartoffelsalat</span><span class="chip">vegetarisch</span><span class="chip">salat</span><span class="chip">beilage</span></div>
+  <p class="rc__cost"><b>12,00 €</b> <span>Einkaufspreis</span> · <span class="rc__pp">3,00 €/Portion</span></p><div class="chips"><span class="chip">kartoffelsalat</span><span class="chip">vegetarisch</span><span class="chip">salat</span><span class="chip">beilage</span></div>
   <div class="rc__foot">
     <button class="rc__toggle" onclick="this.closest('.rc').querySelector('.detail').classList.toggle('hidden')">Details</button>
+    <label class="rc__pick"><input type="checkbox" class="pickbox"> Für Einkauf</label>
     <div class="rc__links"><a class="rc__rate-link" href="obsidian://open?vault=Vault&file=rezepte%2Fviraler-knuspriger-kartoffelsalat.md">Bewerten ↗</a><a class="rc__src" href="https://www.instagram.com/reel/C3DXQiftWJP/" target="_blank" rel="noopener">Quelle ↗</a></div>
   </div>
   <div class="detail hidden">
-    <div><div class="dh">Zutaten</div><ul class="ings"><li>700 g Kartoffel-Drillinge</li><li>20 ml Olivenöl</li><li>nach Geschmack Salz</li><li>nach Geschmack Pfeffer</li><li>nach Geschmack Paprika (Gewürz)</li><li>200 g frische Gurke</li><li>75 g Paprika</li><li>100 g rote Zwiebel</li><li>nach Geschmack Dill oder Petersilie</li><li>90 g Joghurt</li><li>30 ml Mayo</li><li>15 ml Senf</li><li>20 ml Zitronensaft</li><li>nach Geschmack Salz</li><li>nach Geschmack Pfeffer</li></ul><div class="dh" style="margin-top:14px">Notizen</div><ul class="notes"><li>Mengen für Gemüse und Dressing sind Näherungen aus dem Original (½ Gurke ≈ 200 g,</li></ul></div>
+    <div><div class="dh">Zutaten</div><div class="portioner" data-base="4"><span>Portionen</span><button type="button" data-step="-1" aria-label="weniger">−</button><b class="pval">4</b><button type="button" data-step="1" aria-label="mehr">+</button></div><ul class="ings"><li data-m="700" data-e="g" data-n="Kartoffel-Drillinge"><span class="amt">700 g</span> Kartoffel-Drillinge</li><li data-m="20" data-e="ml" data-n="Olivenöl"><span class="amt">20 ml</span> Olivenöl</li><li>nach Geschmack Salz</li><li>nach Geschmack Pfeffer</li><li>nach Geschmack Paprika (Gewürz)</li><li data-m="200" data-e="g" data-n="frische Gurke"><span class="amt">200 g</span> frische Gurke</li><li data-m="75" data-e="g" data-n="Paprika"><span class="amt">75 g</span> Paprika</li><li data-m="100" data-e="g" data-n="rote Zwiebel"><span class="amt">100 g</span> rote Zwiebel</li><li>nach Geschmack Dill oder Petersilie</li><li data-m="90" data-e="g" data-n="Joghurt"><span class="amt">90 g</span> Joghurt</li><li data-m="30" data-e="ml" data-n="Mayo"><span class="amt">30 ml</span> Mayo</li><li data-m="15" data-e="ml" data-n="Senf"><span class="amt">15 ml</span> Senf</li><li data-m="20" data-e="ml" data-n="Zitronensaft"><span class="amt">20 ml</span> Zitronensaft</li><li>nach Geschmack Salz</li><li>nach Geschmack Pfeffer</li></ul><div class="dh" style="margin-top:14px">Notizen</div><ul class="notes"><li>Mengen für Gemüse und Dressing sind Näherungen aus dem Original (½ Gurke ≈ 200 g,</li><li>Portionen (4) sind geschätzt (Beilagensalat vom ganzen Blech). Nährwerte sind</li></ul></div>
     <div><div class="dh">Zubereitung</div><ol class="steps"><li>Die Kartoffeln kochen, danach auf das Blech geben und zerquetschen.</li><li>Etwas Olivenöl und Gewürze dazugeben und bei 180 Grad ca. 20 Minuten backen.</li><li>Währenddessen das Gemüse klein schneiden.</li><li>Alle Zutaten für das Dressing vermengen, das Gemüse hinzufügen.</li><li>Die gebackenen Kartoffeln hinzugeben und den Salat sofort genießen.</li></ol><details class="volltext"><summary>Quelle im Volltext</summary><pre>Viraler knuspriger Kartoffelsalat🥔🥗
 Endlich habe ich auch den Salat ausprobiert und für sehr lecker befunden😍 Wie findet ihr ihn? Wenn ihr den Salat noch nicht ausprobiert habt, macht es auf jeden Fall 😍 Ich habe übrigens etwas mehr Gemüse hinzugefügt, um den Salat frischer zu machen 🙏🏻
 Zutaten:
@@ -232,9 +296,32 @@ Die Kartoffeln kochen, danach auf das Blech geben und zerquetschen. Etwas Oliven
   </div>
 </article>
   </section>
-  <p class="foot">Automatisch erzeugt aus dem Vault (18.09.2026). Bewertungen 1–10, 10 ist gut.
+  <p class="foot">Automatisch erzeugt aus dem Vault (23.09.2026). Bewertungen 1–10, 10 ist gut.
   Einkaufspreis ist ein Richtwert (Summe der Zutaten aus REWE-Preisen).</p>
 </div>
+
+<div id="cartbar" class="cartbar">
+  <div class="cartbar__in">
+    <span class="cartbar__txt"><b id="cartcount">0</b> Rezepte ausgewählt ·
+      <b id="carttotal">0,00 €</b></span>
+    <button id="cartshow" class="tbtn" type="button">Einkaufsliste</button>
+    <button id="cartclear" class="tbtn cartbar__clear" type="button" aria-label="Auswahl leeren">✕</button>
+  </div>
+</div>
+
+<div id="modal" class="modal" hidden>
+  <div class="sheet" role="dialog" aria-label="Einkaufsliste">
+    <div class="sheet__head">
+      <h2>Einkaufsliste</h2>
+      <button id="slx" class="sheet__x" type="button" aria-label="Schließen">✕</button>
+    </div>
+    <p id="slsub" class="sheet__sub"></p>
+    <ul id="sllist" class="sl"></ul>
+    <p id="slmiss" class="sl miss"></p>
+    <button id="slcopy" class="tbtn sheet__copy" type="button">Liste kopieren</button>
+  </div>
+</div>
+
 <script>
 const $=s=>document.querySelector(s), $$=s=>Array.from(document.querySelectorAll(s));
 const cards=$$('.rc'), grid=$('#grid');
@@ -275,6 +362,104 @@ $$('.fchip').forEach(ch=>ch.addEventListener('click',()=>{
   apply();
 }));
 apply();
+
+// --- Zahl-Helfer (deutsches Komma) ---
+function fmtG(n){
+  const r=Math.round(n*100)/100;
+  const s=Number.isInteger(r)?String(r):r.toFixed(2).replace(/0+$/,'').replace(/\.$/,'');
+  return s.replace('.',',');
+}
+function eur(x){return x.toFixed(2).replace('.',',')+' \u20ac';}
+function escHtml(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML;}
+
+// --- Portionsrechner: skaliert die Zutatenmengen live ---
+$$('.portioner').forEach(p=>{
+  const base=parseInt(p.dataset.base,10), card=p.closest('.rc'), val=p.querySelector('.pval');
+  p.querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{
+    let v=parseInt(val.textContent,10)+parseInt(b.dataset.step,10);
+    if(v<1)v=1; val.textContent=v;
+    const f=v/base;
+    card.querySelectorAll('.ings li[data-m]').forEach(li=>{
+      li.querySelector('.amt').textContent=fmtG(parseFloat(li.dataset.m)*f)+' '+li.dataset.e;
+    });
+  }));
+});
+
+// --- Zufall: 'Was koch ich heute?' ---
+const rnd=$('#rnd');
+if(rnd)rnd.addEventListener('click',()=>{
+  const vis=cards.filter(c=>!c.hidden);
+  if(!vis.length)return;
+  const c=vis[Math.floor(Math.random()*vis.length)];
+  const d=c.querySelector('.detail'); if(d)d.classList.remove('hidden');
+  c.scrollIntoView({behavior:'smooth',block:'center'});
+  c.animate([{boxShadow:'0 0 0 2px var(--accent)'},{boxShadow:'0 0 0 0 transparent'}],{duration:1300});
+});
+
+// --- Einkaufsliste: mehrere Rezepte auswählen -> zusammengefasste Liste ---
+const cart=new Set();
+function refreshCart(){
+  const bar=$('#cartbar'); if(!bar)return;
+  if(!cart.size){bar.classList.remove('show');return;}
+  let total=0,missing=0;
+  cart.forEach(c=>{const e=parseFloat(c.dataset.eur);if(!isNaN(e))total+=e;else missing++;});
+  $('#cartcount').textContent=cart.size;
+  $('#carttotal').textContent=eur(total)+(missing?' (+'+missing+' o. Preis)':'');
+  bar.classList.add('show');
+}
+$$('.pickbox').forEach(cb=>cb.addEventListener('change',()=>{
+  const c=cb.closest('.rc');
+  if(cb.checked){cart.add(c);c.classList.add('picked');}else{cart.delete(c);c.classList.remove('picked');}
+  refreshCart();
+}));
+const cartClear=$('#cartclear');
+if(cartClear)cartClear.addEventListener('click',()=>{
+  cart.forEach(c=>{c.classList.remove('picked');const b=c.querySelector('.pickbox');if(b)b.checked=false;});
+  cart.clear(); refreshCart();
+});
+function buildList(){
+  const agg=new Map(), noqty=[];
+  cart.forEach(c=>c.querySelectorAll('.ings li').forEach(li=>{
+    if(li.dataset.m){
+      const key=(li.dataset.n||'').toLowerCase()+'|'+(li.dataset.e||'').toLowerCase();
+      const cur=agg.get(key)||{menge:0,einheit:li.dataset.e,name:li.dataset.n};
+      cur.menge+=parseFloat(li.dataset.m); agg.set(key,cur);
+    }else{const t=li.textContent.trim();if(t&&t!=='\u2013')noqty.push(t);}
+  }));
+  return {agg:[...agg.values()].sort((a,b)=>a.name.localeCompare(b.name)),
+          noqty:[...new Set(noqty)]};
+}
+function openList(){
+  if(!cart.size)return;
+  const {agg,noqty}=buildList();
+  let total=0,missing=0;
+  cart.forEach(c=>{const e=parseFloat(c.dataset.eur);if(!isNaN(e))total+=e;else missing++;});
+  const names=[...cart].map(c=>escHtml(c.dataset.title)).join(' \u00b7 ');
+  $('#slsub').innerHTML=names+' \u2014 <b>'+eur(total)+'</b>'+(missing?' ('+missing+' ohne Preis)':'');
+  $('#sllist').innerHTML=agg.length
+    ? agg.map(a=>'<li><span class="amt">'+fmtG(a.menge)+' '+escHtml(a.einheit)+'</span> '+escHtml(a.name)+'</li>').join('')
+    : '<li>\u2013</li>';
+  $('#slmiss').innerHTML=noqty.length?'Nach Bedarf: '+noqty.map(escHtml).join(', '):'';
+  let plain='Einkaufsliste\n\n';
+  agg.forEach(a=>{plain+='- '+fmtG(a.menge)+' '+a.einheit+' '+a.name+'\n';});
+  if(noqty.length)plain+='\nNach Bedarf: '+noqty.join(', ')+'\n';
+  plain+='\nGesch\u00e4tzter Einkaufspreis: '+eur(total)+'\n';
+  window.__slplain=plain;
+  $('#modal').hidden=false;
+}
+const cartShow=$('#cartshow'); if(cartShow)cartShow.addEventListener('click',openList);
+const slx=$('#slx'); if(slx)slx.addEventListener('click',()=>{$('#modal').hidden=true;});
+const modal=$('#modal');
+if(modal)modal.addEventListener('click',e=>{if(e.target.id==='modal')modal.hidden=true;});
+const slcopy=$('#slcopy');
+if(slcopy)slcopy.addEventListener('click',()=>{
+  const t=window.__slplain||'';
+  if(navigator.clipboard)navigator.clipboard.writeText(t).then(()=>{
+    slcopy.textContent='Kopiert \u2713'; setTimeout(()=>{slcopy.textContent='Liste kopieren';},1500);
+  }).catch(()=>{});
+});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&modal&&!modal.hidden)modal.hidden=true;});
+
 if('serviceWorker'in navigator&&location.protocol.indexOf('http')===0){
   window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
 }
